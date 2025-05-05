@@ -80,6 +80,16 @@ const RequestModal = React.memo(({
   const isFieldValid = (fieldName) => {
     return formData[fieldName] && !validationErrors[fieldName];
   };
+
+  // Validations des lignes
+  const areValidesLines = () => {
+    return selectedItems.every(item => 
+        item.quantity > 0 && 
+        item.quantity_bateau !== '' && 
+        item.quantity_pose !== ''
+    );
+};
+
   
   return (
     <Modal
@@ -191,36 +201,67 @@ const RequestModal = React.memo(({
                 <span className="superviseur-item-unit">({item.unite || '--'})</span>
               </div>
               <div className="superviseur-item-quantities">
+                 
                 <TextField
-                  type="number"
-                  label="Quantité demandée"
-                  size="small"
-                  value={item.quantity || '--'}
-                  onChange={(e) => onQuantityChange(item.id, 'quantity', e.target.value)}
-                  sx={{ width: 120, marginRight: 1 }}
-                  inputProps={{ min: 0 }}
-                  helperText="Quantité nécessaire"
-                />    
+                    type="number"
+                    label="Quantité demandée"
+                    size="small"
+                    value={item.quantity ?? ''}  // Using nullish coalescing instead of logical OR
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        // Convert to number or keep as empty string
+                        const numValue = value === '' ? null : Number(value);
+                        onQuantityChange(item.id, 'quantity', numValue);
+                    }}
+                    sx={{ width: 120, marginRight: 1 }}
+                    inputProps={{ 
+                        min: 0,
+                        step: "any" // Allows decimal numbers if needed
+                    }}
+                    helperText="Quantité demandée"
+                    required
+                    error={item.quantity !== null && item.quantity < 0} // Example validation
+                    />  
                 <TextField
-                  type="number"
-                  label="Quantité posée"
-                  size="small"
-                  value={item.quantity_pose || '--'}
-                  onChange={(e) => onQuantityChange(item.id, 'quantity_pose', e.target.value)}
-                  sx={{ width: 120, marginRight: 1 }}
-                  inputProps={{ min: 0 }}
-                  helperText="Quantité déjà installée"
-                /> 
+                    type="number"
+                    label="Quantité posée"
+                    size="small"
+                    value={item.quantity_pose ?? ''}  // Using nullish coalescing instead of logical OR
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        // Convert to number or keep as empty string
+                        const numValue = value === '' ? null : Number(value);
+                        onQuantityChange(item.id, 'quantity_pose', numValue);
+                    }}
+                    sx={{ width: 120, marginRight: 1 }}
+                    inputProps={{ 
+                        min: 0,
+                        step: "any" // Allows decimal numbers if needed
+                    }}
+                    helperText="Quantité déjà posée"
+                    required
+                    error={item.quantity_pose !== null && item.quantity_pose < 0} 
+                    />
                 <TextField
-                  type="number"
-                  label="Quantité par Bateau"
-                  size="small"
-                  value={item.quantity_bateau || '--'}
-                  onChange={(e) => onQuantityChange(item.id, 'quantity_bateau', e.target.value)}
-                  sx={{ width: 120 }}
-                  inputProps={{ min: 0 }}
-                  helperText="Quantité requise par bateau"
-                /> 
+                    type="number"
+                    label="Quantité nécessaire par Bateau"
+                    size="small"
+                    value={item.quantity_bateau ?? ''}  // Using nullish coalescing instead of logical OR
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        // Convert to number or keep as empty string
+                        const numValue = value === '' ? null : Number(value);
+                        onQuantityChange(item.id, 'quantity_bateau', numValue);
+                    }}
+                    sx={{ width: 120, marginRight: 1 }}
+                    inputProps={{ 
+                        min: 0,
+                        step: "any" // Allows decimal numbers if needed
+                    }}
+                    helperText="Quantité requise par bateau"
+                    required
+                    error={item.quantity_bateau !== null && item.quantity_bateau < 0}
+                    />
               </div>
             </div>
           ))}
@@ -239,7 +280,7 @@ const RequestModal = React.memo(({
         <button 
           className="superviseur-submit-demande-btn"
           onClick={onSubmit}
-          disabled={!formData.project || !formData.post || !formData.boat_name || selectedItems.length === 0}
+          disabled={!formData.project || !formData.post || !formData.boat_name || !areValidesLines() || selectedItems.length === 0 }
         >
           Envoyer la demande
         </button>
@@ -405,9 +446,9 @@ const Superviseur = () => {
       } else {
         return [...prev, { 
           ...item, 
-          quantity: 1,
-          quantity_pose: '--',
-          quantity_bateau: '--'
+          quantity: 0,
+          quantity_pose: '',
+          quantity_bateau: ''
         }];
       }
     });
