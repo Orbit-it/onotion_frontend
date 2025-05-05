@@ -1,43 +1,53 @@
 .admin-table-container {
-    margin: 20px;
-    font-family: Arial, sans-serif;
-  }
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Occupe toute la hauteur de la fenêtre */
+}
+
+.header-bar {
+  flex-shrink: 0; /* Fixe la barre de recherche en haut */
+  padding: 8px;
+}
+
+
+
+.table-wrapper {
+  flex-grow: 1;
+  overflow-y: auto; /* Active uniquement le défilement vertical */
+  border: 1px solid #ddd;
+  padding-left: 5px;
+  padding-right: 5px;
+  position: relative; /* Nécessaire pour position: sticky */
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 5px;
+  border: 1px solid #ddd;
+}
+
+.admin-table th {
+  background-color: #f2f2f2;
+  position: sticky; /* Rend l'en-tête fixe   */
+  top: 0; /* Fixe l'en-tête à 0px du haut de la table */
+  z-index: 1; /* Assure que l'en-tête reste au-dessus des cellules */
+}
+
+.search-bar {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
   
-  .admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .admin-table th,
-  .admin-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .admin-table th {
-    background-color: #f2f2f2;
-  }
-  
-  .admin-table .inventoried {
-    background-color: #d4edda; /* Vert pâle */
-  }
-  
-  .admin-table .inventoried td {
-    color: #155724; /* Texte vert */
-  }
-  
-  .admin-table button {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  .admin-table button:hover {
-    background-color: #0056b3;
-  }
-  
+}
+.inventoried {
+  background-color: #73e973;
+}
+
+
+
